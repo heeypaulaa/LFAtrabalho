@@ -63,9 +63,9 @@ public class AFD {
             int from = Integer.parseInt(trans.getChildText("from"));
             int to = Integer.parseInt(trans.getChildText("to"));
             char read = (trans.getChildText("read")).charAt(0);
-            System.out.println(from);//"FROM: "+trans.getChildText("from"));
-            System.out.println(to);//"PARA: "+trans.getChildText("to"));
-            System.out.println(read);//"letra: "+trans.getChildText("read"));
+            //System.out.println(from);//"FROM: "+trans.getChildText("from"));
+            //System.out.println(to);//"PARA: "+trans.getChildText("to"));
+            //System.out.println(read);//"letra: "+trans.getChildText("read"));
             addTransition(from,to,read);
         }
     }
@@ -87,7 +87,19 @@ public class AFD {
     }
 
     public AFD complement() {
-        return null;
+        AFD novo = new AFD();
+        novo.estados = estados;
+        novo.alfabeto = alfabeto;
+        novo.listaTrans = listaTrans;
+        novo.inicio = inicio;
+
+        for(Integer e : estados){
+            if(!fim.contains(e)) {
+                novo.fim.add(e);
+            }
+        }
+
+        return novo;
     }
 
     public AFD union(AFD m) {
@@ -103,11 +115,49 @@ public class AFD {
     }
 
     public boolean accept(String palavra) {
-        return false;
+        int parteDe = inicio;
+        boolean mudouEst;
+        //percorre cada caracter da palavra
+        for(int i=0; i<palavra.length(); i++){
+            mudouEst = false;
+            //percorre cada item da lista de transiçao(from,to,caracter)
+            for(FuncaoTransicao f : listaTrans){
+                //se o caracter e estado de partida forem iguais
+                if(palavra.charAt(i)==f.getCaracter() && parteDe==f.getFrom()){
+                    mudouEst = true;//mudou de estado
+                    parteDe = f.getTo();//recebe o novo estado de partida ou ultimo estado
+                    break;
+                }
+            }
+            //se percorreu toda a lista de transiçao e nao achou um novo estado, nao aceita a palavra
+            if(mudouEst==false){
+                return false;
+            }
+        }
+        //se o ultimo estado que recebeu for um estado final, aceita a palavra
+        if(this.fim.contains(parteDe)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
-    public String move(int estado, String palavra) {
-        return null;
+    public int move(int estado, String palavra) {
+        int parteDe = estado;
+        //percorre cada caracter da palavra
+        for(int i=0; i<palavra.length(); i++){
+            //percorre cada item da lista de transiçao(from,to,caracter)
+            for(FuncaoTransicao f : listaTrans) {
+                //se o caracter e estado de partida forem iguais
+                if (palavra.charAt(i) == f.getCaracter() && parteDe == f.getFrom()) {
+                    parteDe = f.getTo();
+                    break;
+                }else {
+                    parteDe = -1;
+                }
+            }
+        }
+        return parteDe;
     }
 
     public void addState(int id, boolean inicial, boolean fim) {
@@ -126,11 +176,15 @@ public class AFD {
     }
 
     public void deleteState(int estado) {
-        
 
     }
 
     public void deleteTransition(int parteDe, int vaiPara, char caracter) {
-
+        for(FuncaoTransicao f : listaTrans){
+            if((f.getCaracter()==caracter) && (f.getFrom()==parteDe) && (f.getTo()==vaiPara)){
+                listaTrans.remove(new FuncaoTransicao(parteDe,vaiPara,caracter));
+            }
+        }
     }
+
 }
