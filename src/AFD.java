@@ -19,6 +19,7 @@ import java.util.List;
 
 public class AFD {
     private List<Integer> estados = new ArrayList<>();
+    private List<String> nomeEstados = new ArrayList<>();
     private List<Character> alfabeto = new ArrayList<>();
     private List<FuncaoTransicao> listaTrans = new ArrayList<>();
     private int inicio;
@@ -53,6 +54,7 @@ public class AFD {
                 estInicio = true;
             }
             addState(id,estInicio,estFim);
+            this.nomeEstados.add(est.getAttributeValue("name"));
             //System.out.println("Nome: " + est.getAttributeValue("name"));
         }
 
@@ -66,6 +68,9 @@ public class AFD {
             //System.out.println(from);//"FROM: "+trans.getChildText("from"));
             //System.out.println(to);//"PARA: "+trans.getChildText("to"));
             //System.out.println(read);//"letra: "+trans.getChildText("read"));
+            if(!this.alfabeto.contains(read)){
+                this.alfabeto.add(read);
+            }
             addTransition(from,to,read);
         }
     }
@@ -98,11 +103,33 @@ public class AFD {
                 novo.fim.add(e);
             }
         }
-
         return novo;
     }
 
-    public AFD union(AFD m) {
+    public AFD union(AFD m2) {
+        AFD novo = new AFD();
+        int estM1 = this.estados.size();
+        int estM2 = m2.estados.size();
+        List<Integer[]> visitar = new ArrayList<Integer[]>();
+        List<Integer[]> visitados = new ArrayList<Integer[]>();
+
+        FuncaoTransicao[][] matrizMult = new FuncaoTransicao[estM1][estM2];
+        int toM1, toM2;
+
+        novo.alfabeto = this.alfabeto;
+        for(Character a : alfabeto)
+            if(!novo.alfabeto.contains(a))
+                novo.alfabeto.add(a);
+
+        for(int fromM1 = 0; fromM1<estM1; fromM1++){
+            for(int fromM2 = 0; fromM2<estM2; fromM2++){
+                for(Character c: novo.alfabeto){
+                    toM1 = this.move(fromM1,c);
+                    toM2 = m2.move(fromM2,c);
+                }
+            }
+        }
+
         return null;
     }
 
@@ -176,7 +203,13 @@ public class AFD {
     }
 
     public void deleteState(int estado) {
-
+        for(int e : this.estados){
+            for(char a : this.alfabeto) {
+                deleteTransition(e, estado, a);
+                deleteTransition(estado, e, a);
+            }
+        }
+        this.estados.remove(estado);
     }
 
     public void deleteTransition(int parteDe, int vaiPara, char caracter) {
