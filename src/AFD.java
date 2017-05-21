@@ -106,39 +106,84 @@ public class AFD {
         return novo;
     }
 
-    public AFD union(AFD m2) {
-        AFD novo = new AFD();
-        int estM1 = this.estados.size();
-        int estM2 = m2.estados.size();
-        List<Integer[]> visitar = new ArrayList<Integer[]>();
+    public AFD union(AFD m2){
         List<Integer[]> visitados = new ArrayList<Integer[]>();
+        AFD novo = multiplicacao(this, m2, visitados);
 
-        FuncaoTransicao[][] matrizMult = new FuncaoTransicao[estM1][estM2];
+        for(Integer[] v : visitados){
+            //descobre o estado inicial
+            if((v[0]==this.inicio)&&(v[1]==m2.inicio)){
+                novo.inicio = visitados.indexOf(v);
+            }
+            //descobre os estados finais
+            if((this.fim.contains(v[0]))||(m2.fim.contains(v[1]))){
+                novo.fim.add(visitados.indexOf(v));
+            }
+        }
+        return novo;
+    }
+
+    public AFD multiplicacao(AFD m1, AFD m2, List<Integer[]>visitados) {
+        AFD novo = new AFD();
+        //int estM1 = this.estados.size();
+        //int estM2 = m2.estados.size();
+        List<Integer[]> visitar = new ArrayList<Integer[]>();
+        //List<Integer[]> visitados = new ArrayList<Integer[]>();
+        //FuncaoTransicao[][] matrizMult = new FuncaoTransicao[estM1][estM2];
         int toM1, toM2;
-
-        novo.alfabeto = this.alfabeto;
-        for(Character a : alfabeto)
+        novo.alfabeto = m1.alfabeto;
+        for(Character a : m2.alfabeto)
             if(!novo.alfabeto.contains(a))
                 novo.alfabeto.add(a);
 
-        for(int fromM1 = 0; fromM1<estM1; fromM1++){
-            for(int fromM2 = 0; fromM2<estM2; fromM2++){
-                for(Character c: novo.alfabeto){
-                    toM1 = this.move(fromM1,c);
-                    toM2 = m2.move(fromM2,c);
+        Integer e[] = new Integer[2];
+        //visitar iniciando pelos estados iniciais de cada AFD
+        e[0]=m1.inicio; e[1]=m2.inicio;
+        visitar.add(e);
+
+        int fromM1, fromM2;
+        //while(!visitar.isEmpty()){
+        for(Integer[] v : visitar){
+            fromM1=v[0]; fromM2=v[1];
+            for(Character c: novo.alfabeto) {
+                String aux = "" + c;
+                toM1 = m1.move(fromM1, aux);
+                toM2 = m2.move(fromM2, aux);
+                //adiciona a lista de estados para visitar
+                e[0]=toM1; e[1]=toM2;
+                if(visitados.isEmpty() || !visitados.contains(e)) {
+                    visitar.add(e);
+                    novo.addState(visitar.indexOf(e),false,false);
                 }
+                //adiciona f.trans a lista de transição (index de v, index do novo elesmento de visitar, c)
+                novo.addTransition(visitar.indexOf(v),visitar.indexOf(e),c);
+            }
+            //adiciona o primeiro da lista de visitar a lista de visitados
+            visitados.add(v);
+            //e o remove da lista de visitar
+        }
+        return novo;
+    }
+
+    public AFD intersection(AFD m2) {
+        List<Integer[]> visitados = new ArrayList<Integer[]>();
+        AFD novo = multiplicacao(this, m2, visitados);
+
+        for(Integer[] v : visitados){
+            //descobre o estado inicial
+            if((v[0]==this.inicio)&&(v[1]==m2.inicio)){
+                novo.inicio = visitados.indexOf(v);
+            }
+            //descobre os estados finais
+            if((this.fim.contains(v[0]))&&(m2.fim.contains(v[1]))){
+                novo.fim.add(visitados.indexOf(v));
             }
         }
-
-        return null;
+        return novo;
     }
 
-    public AFD intersection(AFD m) {
-        return null;
-    }
-
-    public AFD difference(AFD m) {
-        return null;
+    public AFD difference(AFD m2) {
+        return this.intersection(m2.complement());
     }
 
     public boolean accept(String palavra) {
