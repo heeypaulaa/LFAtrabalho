@@ -36,4 +36,7 @@ public class FuncaoTransicao {
         this.caracter = caracter;
     }
 
+    public String toString(){
+        return "("+this.getFrom()+","+this.getTo()+","+this.getCaracter()+")";
+    }
 }

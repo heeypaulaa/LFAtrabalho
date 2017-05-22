@@ -91,6 +91,7 @@ public class AFD {
         return null;
     }
 
+    /*OK*/
     public AFD complement() {
         AFD novo = new AFD();
         novo.estados = estados;
@@ -143,7 +144,9 @@ public class AFD {
 
         int fromM1, fromM2;
         //while(!visitar.isEmpty()){
+        System.out.print("fora");
         for(Integer[] v : visitar){
+            System.out.print("dentro");
             fromM1=v[0]; fromM2=v[1];
             for(Character c: novo.alfabeto) {
                 String aux = "" + c;
@@ -265,4 +268,25 @@ public class AFD {
         }
     }
 
+    @Override
+    public String toString() {
+        String aux = "Estados{";
+        for(Integer e : this.estados)
+            aux=  aux + e+" ";
+
+        aux=aux+"}; Alfabeto{";
+        for(Character a : this.alfabeto)
+            aux = aux+a+" ";
+
+        aux=aux+"}; Transicao{";
+        for(FuncaoTransicao t: this.listaTrans)
+            aux = aux+t.toString()+" ";
+
+        aux=aux+"}; Inicio:"+this.initial()+"; Final{";
+        for(Integer f: this.fim)
+            aux=aux+f+" ";
+        aux=aux+"}.";
+
+        return  aux;
+    }
 }
