@@ -110,27 +110,27 @@ public class AFD {
         return novo;
     }
 
+    /*OK*/
     public AFD union(AFD m2) {
-        List<Integer[]> visitados = new ArrayList<Integer[]>();
-        AFD novo = new AFD();//multiplicacao(this, m2, visitados);
-
-        for (Integer[] v : visitados) {
+        List<VisitarVisitados> visitados = new ArrayList<>();
+        AFD novo = multiplicacao(this, m2, visitados);
+        for(VisitarVisitados v : visitados){
             //descobre o estado inicial
-            if ((v[0] == this.inicio) && (v[1] == m2.inicio)) {
+            if ((v.getAfd1() == this.inicio) && (v.getAfd2() == m2.inicio)) {
                 novo.inicio = visitados.indexOf(v);
             }
             //descobre os estados finais
-            if ((this.fim.contains(v[0])) || (m2.fim.contains(v[1]))) {
+            if ((this.fim.contains(v.getAfd1())) || (m2.fim.contains(v.getAfd2()))) {
                 novo.fim.add(visitados.indexOf(v));
             }
         }
         return novo;
     }
 
+    /*OK*/
     public AFD intersection(AFD m2) {
         List<VisitarVisitados> visitados = new ArrayList<>();
-        AFD novo = multi(this, m2, visitados);
-        System.out.print("inter\n");
+        AFD novo = multiplicacao(this, m2, visitados);
         for(VisitarVisitados v : visitados){
             //descobre o estado inicial
             if((v.getAfd1()==this.inicio)&&(v.getAfd2()==m2.inicio)){
@@ -144,94 +144,43 @@ public class AFD {
         return novo;
     }
 
+    /*OK*/
     public AFD difference(AFD m2) {
         return this.intersection(m2.complement());
     }
 
-    public AFD multi(AFD m1, AFD m2,List<VisitarVisitados> visitados) {
+    /*OK*/
+    public AFD multiplicacao(AFD m1, AFD m2,List<VisitarVisitados> visitados) {
         AFD novo = new AFD();
-        String f1 = "", t1 = "";
-        int i=0,prox=0,toM1, toM2, fromM1, fromM2;
+        int i=0,toM1, toM2;
         for (Character a : m2.alfabeto) {
             if (!novo.alfabeto.contains(a) || novo.alfabeto.isEmpty())
                 novo.alfabeto.add(a);
         }
-
         for (Character a : m1.alfabeto) {
             if (!novo.alfabeto.contains(a) || novo.alfabeto.isEmpty())
                 novo.alfabeto.add(a);
         }
-        List<VisitarVisitados> visitar1 = new ArrayList<>();
+        List<VisitarVisitados> visitar = new ArrayList<>();
+        visitar.add(new VisitarVisitados(m1.initial(), m2.initial()));
 
-        visitar1.add(new VisitarVisitados(m1.initial(), m2.initial()));
         do {
-            VisitarVisitados v = visitar1.get(i);
+            VisitarVisitados v = visitar.get(i);
             if(visitados.isEmpty() || !visitados.contains(v)) {
                 novo.addState(i, false, false);
                 visitados.add(v);
-                System.out.print("\nOutro");
-                System.out.print("v: "+v.toString());
                 for (Character c : novo.alfabeto) {
                     String aux = "" + c;
                     toM1 = m1.move(v.getAfd1(), aux);
                     toM2 = m2.move(v.getAfd2(), aux);
                     VisitarVisitados vAux = new VisitarVisitados(toM1, toM2);
-                    //System.out.print("------"+);
-                    if (!existeNaLista(visitar1,vAux)) {
-                        System.out.println("vAux: "+vAux.toString());
-                        visitar1.add(vAux);
-                    }
-                    System.out.print(visitados.lastIndexOf(v));
-                    System.out.println(" "+visitar1.lastIndexOf(vAux) + " "+vAux.toString());
-                    novo.addTransition(visitados.lastIndexOf(v), getIndex(visitar1,vAux), c);
+                    if (!existeNaLista(visitar,vAux))
+                        visitar.add(vAux);
+                    novo.addTransition(visitados.lastIndexOf(v), getIndex(visitar,vAux), c);
                 }
             }
             i++;
-            System.out.println("i: "+i+" size"+visitar1.size());
-        }while (visitar1.size()!=i);
-
-
-      /*  fromM1=m1.inicio; fromM2=m2.inicio;
-        /* 0 nao aconteceu nada
-        * 1 visitado
-        * 2 visitar
-        * */
-        /*visitados[fromM1][fromM2]=2;
-        int novosEst=0;
-        for (int i = 0; i < m1.alfabeto.size()*m2.alfabeto.size(); i++) {
-            if(visitados[fromM1][fromM2]==2) {
-                visitados[fromM1][fromM2] = 1;
-                novo.addState(novosEst, false, false);
-                for (Character c : novo.alfabeto) {
-                    String aux = "" + c;
-                    toM1 = m1.move(fromM1, aux);
-                    toM2 = m2.move(fromM2, aux);
-                    if (visitados[toM1][toM2] != 1) {
-                        visitados[toM1][toM2] = 2;
-                        novosEst++;
-                    }
-                }
-            }
-        }
-
-
-        for (int i = 0; i < m1.alfabeto.size(); i++) {
-            for (int j = 0; j < m2.alfabeto.size(); j++) {
-                if(visitados[fromM1][fromM2]==2) {
-                    visitados[fromM1][fromM2] = 1;
-                    novo.addState(novosEst, false, false);
-                    for (Character c : novo.alfabeto) {
-                        String aux = "" + c;
-                        toM1 = m1.move(fromM1, aux);
-                        toM2 = m2.move(fromM2, aux);
-                        if (visitados[toM1][toM2] != 1) {
-                            visitados[toM1][toM2] = 2;
-                            novosEst++;
-                        }
-                    }
-                }
-            }
-        }*/
+        }while (visitar.size()!=i);
         return novo;
     }
 
@@ -328,7 +277,6 @@ public class AFD {
         VisitarVisitados v;
         for(int i = 0; i<l.size(); i++){
             v= l.get(i);
-            System.out.println(v.toString());
             if((v.getAfd1() == o.getAfd1())&&(v.getAfd2() == o.getAfd2())){
                 return i;
             }

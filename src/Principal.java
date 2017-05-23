@@ -23,8 +23,11 @@ public class Principal {
         AFD inter = m1.intersection(m2);
         System.out.println("Inters 1 2\n"+inter.toString());
 
-        AFD uni = m1.intersection(m2);
+        AFD uni = m1.union(m2);
         System.out.println("Uniao 1 2\n"+uni.toString());
+
+        AFD dif = m2.difference(m1);
+        System.out.println("Difer 1 2\n"+dif.toString());
 
         AFD comp1 = m1.complement();
         System.out.println("Complemento 1\n"+comp1.toString());
