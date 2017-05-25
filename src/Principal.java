@@ -1,6 +1,9 @@
 import org.jdom2.JDOMException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Ana Paula da Silva Cunha
@@ -17,7 +20,7 @@ public class Principal {
         System.out.println("Par A\n"+m1.toString());
 
         AFD m2 = new AFD();
-        m2.load("impb.jff");
+       /* m2.load("impb.jff");
         System.out.println("Impar b\n"+m2.toString());
 
         AFD inter = m1.intersection(m2);
@@ -26,11 +29,16 @@ public class Principal {
         AFD uni = m1.union(m2);
         System.out.println("Uniao 1 2\n"+uni.toString());
 
-        AFD dif = m2.difference(m1);
+        AFD dif = m1.difference(m2);
         System.out.println("Difer 1 2\n"+dif.toString());
 
         AFD comp1 = m1.complement();
         System.out.println("Complemento 1\n"+comp1.toString());
-    }
+        */
 
+
+        List<String> eqv = new ArrayList<>();
+        eqv = m1.equivalents();
+
+    }
 }

@@ -1,11 +1,11 @@
 /**
  * Created by paula on 23/05/17.
  */
-public class VisitarVisitados {
+public class TuplaEstados {
     private int afd1;
     private int afd2;
 
-    public VisitarVisitados(int m1, int m2) {
+    public TuplaEstados(int m1, int m2) {
         this.setAfd1(m1);
         this.setAfd2(m2);
     }

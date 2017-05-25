@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 
 /**
@@ -35,6 +34,7 @@ public class AFD {
         return fim;
     }
 
+    /*OK*/
     public void load(String entrada) throws JDOMException, IOException {
         File fXmlFile = new File(entrada);
         SAXBuilder builder = new SAXBuilder();
@@ -86,8 +86,37 @@ public class AFD {
         return false;
     }
 
-    public List<String> equivalents() {
-        return null;
+    public List<TuplaEstados> equivalents() {
+        List<TuplaEstados> eqv = new ArrayList<>();
+        List<TuplaEstados> verifEqv = new ArrayList<>();
+
+        Integer toM1,toM2;
+        for(int i =0; i<this.estados.size()-1; i++){
+            Integer v1 = this.estados.get(i);
+            for(int j=i+1; j<this.estados.size(); j++){
+                Integer v2 = this.estados.get(j);
+                if((this.fim.contains(v1) && this.estados.contains(v2)) || (!this.fim.contains(v1) && !this.estados.contains(v2))){
+                    for (Character c : this.alfabeto) {
+                        String aux = "" + c;
+                        toM1 = this.move(v1, aux);
+                        toM2 = this.move(v2, aux);
+                        if(!this.fim.contains(toM1) || !this.fim.contains(toM2)){
+                            TuplaEstados vAux2 = new TuplaEstados(toM1, toM2);
+                            TuplaEstados vAux = new TuplaEstados(v1, v2);
+                            verifEqv.add(vAux);
+                            verifEqv.add(vAux2);
+                        }
+
+
+                       /* if (!existeNaLista(visitar,vAux))
+                            visitar.add(vAux);
+                        novo.addTransition(visitados.lastIndexOf(v), getIndex(visitar,vAux), c);*/
+                    }
+                }
+            }
+        }
+
+        return eqv;
     }
 
     public AFD minimum() {
@@ -112,9 +141,9 @@ public class AFD {
 
     /*OK*/
     public AFD union(AFD m2) {
-        List<VisitarVisitados> visitados = new ArrayList<>();
+        List<TuplaEstados> visitados = new ArrayList<>();
         AFD novo = multiplicacao(this, m2, visitados);
-        for(VisitarVisitados v : visitados){
+        for(TuplaEstados v : visitados){
             //descobre o estado inicial
             if ((v.getAfd1() == this.inicio) && (v.getAfd2() == m2.inicio)) {
                 novo.inicio = visitados.indexOf(v);
@@ -129,9 +158,9 @@ public class AFD {
 
     /*OK*/
     public AFD intersection(AFD m2) {
-        List<VisitarVisitados> visitados = new ArrayList<>();
+        List<TuplaEstados> visitados = new ArrayList<>();
         AFD novo = multiplicacao(this, m2, visitados);
-        for(VisitarVisitados v : visitados){
+        for(TuplaEstados v : visitados){
             //descobre o estado inicial
             if((v.getAfd1()==this.inicio)&&(v.getAfd2()==m2.inicio)){
                 novo.inicio = visitados.indexOf(v);
@@ -150,7 +179,7 @@ public class AFD {
     }
 
     /*OK*/
-    public AFD multiplicacao(AFD m1, AFD m2,List<VisitarVisitados> visitados) {
+    public AFD multiplicacao(AFD m1, AFD m2,List<TuplaEstados> visitados) {
         AFD novo = new AFD();
         int i=0,toM1, toM2;
         for (Character a : m2.alfabeto) {
@@ -161,11 +190,11 @@ public class AFD {
             if (!novo.alfabeto.contains(a) || novo.alfabeto.isEmpty())
                 novo.alfabeto.add(a);
         }
-        List<VisitarVisitados> visitar = new ArrayList<>();
-        visitar.add(new VisitarVisitados(m1.initial(), m2.initial()));
+        List<TuplaEstados> visitar = new ArrayList<>();
+        visitar.add(new TuplaEstados(m1.initial(), m2.initial()));
 
         do {
-            VisitarVisitados v = visitar.get(i);
+            TuplaEstados v = visitar.get(i);
             if(visitados.isEmpty() || !visitados.contains(v)) {
                 novo.addState(i, false, false);
                 visitados.add(v);
@@ -173,7 +202,7 @@ public class AFD {
                     String aux = "" + c;
                     toM1 = m1.move(v.getAfd1(), aux);
                     toM2 = m2.move(v.getAfd2(), aux);
-                    VisitarVisitados vAux = new VisitarVisitados(toM1, toM2);
+                    TuplaEstados vAux = new TuplaEstados(toM1, toM2);
                     if (!existeNaLista(visitar,vAux))
                         visitar.add(vAux);
                     novo.addTransition(visitados.lastIndexOf(v), getIndex(visitar,vAux), c);
@@ -184,6 +213,7 @@ public class AFD {
         return novo;
     }
 
+    /*CONFERIR*/
     public boolean accept(String palavra) {
         int parteDe = inicio;
         boolean mudouEst;
@@ -212,6 +242,7 @@ public class AFD {
         }
     }
 
+    /*ok*/
     public int move(int estado, String palavra) {
         int parteDe = estado;
         AFD aux = this;
@@ -230,6 +261,7 @@ public class AFD {
         return parteDe;
     }
 
+    /*OK*/
     public void addState(int id, boolean inicial, boolean fim) {
         this.estados.add(id);
         if (inicial == true) {
@@ -240,7 +272,7 @@ public class AFD {
         }
     }
 
-
+    /*OK*/
     public void addTransition(int parteDe, int vaiPara, char caracter) {
         FuncaoTransicao funcTrans = new FuncaoTransicao(parteDe, vaiPara, caracter);
         listaTrans.add(funcTrans);
@@ -264,8 +296,11 @@ public class AFD {
         }
     }
 
-    private static boolean existeNaLista(List<VisitarVisitados> l, VisitarVisitados o){
-        for(VisitarVisitados e: l){
+
+
+
+    private static boolean existeNaLista(List<TuplaEstados> l, TuplaEstados o){
+        for(TuplaEstados e: l){
             if((e.getAfd1() == o.getAfd1())&&(e.getAfd2() == o.getAfd2())){
                 return true;
             }
@@ -273,8 +308,8 @@ public class AFD {
         return false;
     }
 
-    private static int getIndex(List<VisitarVisitados> l, VisitarVisitados o){
-        VisitarVisitados v;
+    private static int getIndex(List<TuplaEstados> l, TuplaEstados o){
+        TuplaEstados v;
         for(int i = 0; i<l.size(); i++){
             v= l.get(i);
             if((v.getAfd1() == o.getAfd1())&&(v.getAfd2() == o.getAfd2())){

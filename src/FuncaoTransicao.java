@@ -4,20 +4,12 @@
 public class FuncaoTransicao {
     private int from;
     private int to;
-    private String from1;
-    private String to1;
     private char caracter;
 
     public FuncaoTransicao(int de, int para, char caract) {
         this.setFrom(de);
         this.setTo(para);
         this.setCaracter(caract);
-    }
-
-    public FuncaoTransicao(String from1,String to1, char caract){
-        this.from1 = from1;
-        this.to1 = to1;
-        this.caracter = caract;
     }
 
     public int getFrom() {
