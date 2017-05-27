@@ -36,6 +36,8 @@ public class Principal {
         System.out.println("Complemento 1\n"+comp1.toString());
         */
 
+       m1.save("bla");
+
 
     }
 }

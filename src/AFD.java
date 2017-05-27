@@ -1,7 +1,9 @@
+import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +34,6 @@ public class AFD {
         return fim;
     }
 
-    /*OK*/
     public void load(String entrada) throws JDOMException, IOException {
         File fXmlFile = new File(entrada);
         SAXBuilder builder = new SAXBuilder();
@@ -72,11 +73,6 @@ public class AFD {
         }
     }
 
-    public void save(String saida) {
-
-    }
-
-    /*OK*/
     public AFD complement() {
         AFD novo = new AFD();
         novo.estados = estados;
@@ -92,7 +88,6 @@ public class AFD {
         return novo;
     }
 
-    /*OK*/
     public AFD union(AFD m2) {
         List<TuplaEstados> visitados = new ArrayList<>();
         AFD novo = multiplicacao(this, m2, visitados);
@@ -109,7 +104,6 @@ public class AFD {
         return novo;
     }
 
-    /*OK*/
     public AFD intersection(AFD m2) {
         List<TuplaEstados> visitados = new ArrayList<>();
         AFD novo = multiplicacao(this, m2, visitados);
@@ -126,14 +120,13 @@ public class AFD {
         return novo;
     }
 
-    /*OK*/
     public AFD difference(AFD m2) {
         return this.intersection(m2.complement());
     }
 
-    /*OK*/
     public AFD multiplicacao(AFD m1, AFD m2,List<TuplaEstados> visitados) {
         AFD novo = new AFD();
+        /*define novo alfabeto*/
         int i=0,toM1, toM2;
         for (Character a : m2.alfabeto) {
             if (!novo.alfabeto.contains(a) || novo.alfabeto.isEmpty())
@@ -143,6 +136,7 @@ public class AFD {
             if (!novo.alfabeto.contains(a) || novo.alfabeto.isEmpty())
                 novo.alfabeto.add(a);
         }
+        /*estados a visitar dos dois autômatos*/
         List<TuplaEstados> visitar = new ArrayList<>();
         visitar.add(new TuplaEstados(m1.initial(), m2.initial()));
 
@@ -150,14 +144,15 @@ public class AFD {
             TuplaEstados v = visitar.get(i);
             if(visitados.isEmpty() || !visitados.contains(v)) {
                 novo.addState(i, false, false);
-                visitados.add(v);
+                visitados.add(v);//visita o primeiro par de estados
                 for (Character c : novo.alfabeto) {
                     String aux = "" + c;
                     toM1 = m1.move(v.getAfd1(), aux);
                     toM2 = m2.move(v.getAfd2(), aux);
                     TuplaEstados vAux = new TuplaEstados(toM1, toM2);
-                    if (!existeNaLista(visitar,vAux))
+                    if (!existeNaLista(visitar,vAux))//verifica se já esta na lista para visitar
                         visitar.add(vAux);
+                    //adiciona nova transição ao automato, seus estados são os indices das listas de visitar e visitados
                     novo.addTransition(visitados.lastIndexOf(v), getIndex(visitar,vAux), c);
                 }
             }
@@ -166,24 +161,14 @@ public class AFD {
         return novo;
     }
 
-    /*CONFERIR*/
     public boolean accept(String palavra) {
         int parteDe = inicio;
-        boolean mudouEst;
         //percorre cada caracter da palavra
         for (int i = 0; i < palavra.length(); i++) {
-            mudouEst = false;
-            //percorre cada item da lista de transiçao(from,to,caracter)
-            for (FuncaoTransicao f : listaTrans) {
-                //se o caracter e estado de partida forem iguais
-                if (palavra.charAt(i) == f.getCaracter() && parteDe == f.getFrom()) {
-                    mudouEst = true;//mudou de estado
-                    parteDe = f.getTo();//recebe o novo estado de partida ou ultimo estado
-                    break;
-                }
-            }
-            //se percorreu toda a lista de transiçao e nao achou um novo estado, nao aceita a palavra
-            if (mudouEst == false) {
+            String aux = ""+palavra.charAt(i);
+            //verifica se existe o movimento valido, se não recebe -1
+            parteDe = move(parteDe, aux);
+            if(parteDe == -1){
                 return false;
             }
         }
@@ -195,7 +180,6 @@ public class AFD {
         }
     }
 
-    /*ok*/
     public int move(int estado, String palavra) {
         int parteDe = estado;
         AFD aux = this;
@@ -214,7 +198,6 @@ public class AFD {
         return parteDe;
     }
 
-    /*OK*/
     public void addState(int id, boolean inicial, boolean fim) {
         this.estados.add(id);
         if (inicial == true) {
@@ -225,7 +208,6 @@ public class AFD {
         }
     }
 
-    /*OK*/
     public void addTransition(int parteDe, int vaiPara, char caracter) {
         FuncaoTransicao funcTrans = new FuncaoTransicao(parteDe, vaiPara, caracter);
         listaTrans.add(funcTrans);
