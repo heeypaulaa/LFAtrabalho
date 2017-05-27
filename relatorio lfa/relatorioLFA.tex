@@ -17,72 +17,74 @@
 \begin{document}
 \begin{center}
 {\footnotesize Graduação em Ciência da Computação. Disciplina: Linguagens Formais e Autômatos. Ano 2017. Prof. Walace De Almeida Rodrigues.}\\[0.5cm]
-{\Large \textbf {LFA - ALGORITMOS DE CONVERSÃO DE AUTÔMATOS}}\\[0.5cm]
-Ana Paula da Silva Cunha - Matrícula :  0011252		$^1$\\,Suena Batista Galoneti -  Matrícula :	0011251		$^2$\\
+{\Large \textbf {Algoritmos de Conversão de Autômatos}}\\[0.5cm]
+Ana Paula da Silva Cunha - Matrícula: 0011252$^1$\\Suena Batista Galoneti - Matrícula: 0011251$^1$\\
 $^1$Instituto Federal de Minas Gerais, Formiga, MG\\[1cm]
 \end{center}
 
 \begin{quote}
-{\small \textbf{Resumo:} Este documento apresenta o relatório do desenvolvimento do primeiro trabalho da disciplina que objetivava a implementação de alguns algoritmos.} \\[0.5cm]
+{\small \textbf{Resumo:} Este documento apresenta o relatório do desenvolvimento do primeiro trabalho da disciplina de Linguagens Formais e Autômatos (LFA) que tem como objetivo implementar algoritmos para manipulação de autômatos finitos determinísticos, a partir de um documento XML .} \\[0.5cm]
 {\small Palavras-Chaves: LFA; Algoritmos.}
 \end{quote}
 	
-\section{INTRODUÇÃO}
-
-\paragraph{} O conceito de autômato o define como um conjunto finito de estados. 
-
-\paragraph{} Autômatos também podem ser definidos através de uma quintupla : Conjunto de Estados, Alfabeto, Função de Transição, Estado Inicial(se determinístico, e Conjunto de Estados Iniciais se não determinístico) e Conjunto de Estados Finais.
-
-\paragraph{}Descrevendo seu funcionamento ou caminhamento vemos que um autômato parte de um estado inicial e caminha para um próximo estado de acordo com a função de transição e a palavra que está sendo reconhecida, e está deve conter apenas elementos do alfabeto do autômato para ser aceita.
-
-\subsection{EQUIVALÊNCIA}
-
-\paragraph{} A equivalência de autômatos se dá a partir da equivalência de seus estados, sendo o principal o estado inicial, pois partindo de uma mesma entrada o comportamento dos dois autômatos deve ser o mesmo para que estes sejam equivalentes.
-
-\subsection{MINIMIZAÇÃO}
-
-\paragraph{} Um autômato é possível de minimização se este possuir estados equivalentes, ou seja, se dois estados pertencentes ao autômato desempenharem o mesmo papel, se este caso ocorrer o autômato mínimo irá apresentar apenas um desses estados.
-
-\subsection{MULTIPLICAÇÃO}
-
-\paragraph{} Utilizamos a multiplicação de autômatos quando, de maneira bruta, quisermos transformar dois autômatos em um. Ou seja, partindo de dois autômato distintos e pré definidos, realizarmos uma operação que ao final resulte em um único autômato. Essas operações podem ser :
-
+\section{Introdução}
+\paragraph{}O conceito de autômato finito, o define como um conjunto finito de estados. Um AFD (Autômato Finito Determinístico) é uma Quíntupla (\textit{E}, $\Sigma$, $\delta$, \textit{i}, \textit{F}), tal que:
 \begin{itemize}
-\item Complemento
-\item Diferença
-\item Interseção
-\item União
+	\item \textit{E}: um conjunto finito não vazio de estados;
+	\item $\Sigma$: um alfabeto;
+	\item $\delta$: E $\times$ $\sigma$ $\rightarrow$ E é a função de transição, uma função total;
+	\item \textit{i}: é o estado inicial que pertence à E;
+	\item \textit{F}: é o conjunto de estados finais.
+\end{itemize} 
+
+Descrevendo seu funcionamento ou caminhamento vemos que um autômato parte de um estado inicial e caminha para um próximo estado de acordo com a função de transição e a palavra que está sendo reconhecida, e esta deve conter apenas elementos do alfabeto do autômato para ser aceita.
+
+\section{Desenvolvimento}
+\paragraph{}Foi sugerido que os algoritmos para manipulação de AFDs, fossem feitos na linguagem de programação Java ou Python, deste modo foi optado pela linguagem Java.
+
+Para a montagem dos autômatos e saída gráfica foi utilizado o JFlap. Este programa tem como extensão um arquivo .jff, que ao abri-lo em formato texto, tem formato XML, sendo assim uma maneira fácil de manipula-lo.  
+
+Inicialmente foram criadas três classes nomeadas como:
+\begin{itemize}
+	\item TuplaEstados;
+	\item FuncaoTransicao;
+	\item AFD.
 \end{itemize}
 
-\section{DESENVOLVIMENTO}
+Estas funções serão descritas nas subseções a seguir.
 
-\paragraph{} Foi optado pelo desenvolvimento dos algoritmos acima descritos na linguagem Java.
+\subsection{Classe: \textit{TuplaEstados}}
+\paragraph{}Classe feita para manipular estados 'visitados' e à 'visitar' em uma multiplicação de dois autômatos determinísticos. Ao criar um objeto do tipo \textit{TuplaEstados}, seu conteúdo seria estado do primeiro automato e do segundo (afd1E, afd2E). Seus métodos são básicos para manipulação de um objeto, \textit{Geters}, \textit{Seters} e \textit{Override} do método \textit{toString()}.
 
-\paragraph{} Para a montagem dos autômatos e saída gráfica está sendo utilizado o JFlap.
+\subsection{Classe: \textit{FuncaoTransicao}}
+\paragraph{}A classe \textit{FuncaoTransicao}, foi feita para manipular cada função de transição do autômato. O objeto do tipo \textit{FuncaoTransicao} é constituído de: o estado de partida do autômato, o estado de chegada do mesmo autômato e uma letra do alfabeto deste (de, para, caracter).
 
-\paragraph{} Inicialmente foram criadas duas classes nomeadas como, a primeira, de AFD e, a segunda, FunçãoTransição.
+\subsection{Classe: \textit{AFD}}
+\paragraph{}Dentro da classe \textit{AFD} foi implementado o método para leitura do arquivo XML, montando um objeto do tipo \textit{AFD}, tendo os seguintes parâmetros para sua construção: \textit{ArrayList} do tipo \textit{Integer} para o conjunto de estados e conjunto de estados finais do autômato, \textit{ArrayList} do tipo \textit{Character} para o alfabeto do AFD, \textit{ArrayList} do tipo \textit{FuncaoTransicao} para todas as funções de transições do autômato, e o estado inicial do tipo \textit{int}.
 
-\paragraph{} Dentro da classe AFD foi implementado o método para leitura (utilizando árvore) do arquivo XML.
+Outro método presente nesta classe é para a obtenção do complemento, aonde verifica quais estados são finais e quais não são, e transforma os estados não finais nos novos estados finais e os finais anteriores tornando-os não finais.
 
-\paragraph{}Outro método presente nesta classe é o para a obtenção do complemento, aonde verifica quais estados são finais e quais não são e transforma os estados não finais nos novos estados finais.
+Para a implementação  da união, interseção e diferença de autômatos, fez necessário a implementação do método \textit{multiplicacao}. Este método consistiu em unir os alfabetos dos dois autômatos em um novo alfabeto e fazer um novo caminhamento verificando os nós "visitados" e os nós à "visitar" (um \textit{ArrayList} do tipo \textit{TuplaEstados} foi feito para cada um), utilizando a função transição obtendo novos estados para o autômato final (o autômato final terá seus estados finais definidos de acordo com a operação escolhida).
 
-\paragraph{}Para a implementação  da união, interseção e diferença de autômatos fez necessário a implementação da multiplicação. A multiplicação consistiu em unir os alfabetos dos dois autômatos em um novo alfabeto e fazer um novo caminhamento verificando os nós visitados e os a visitar e utilizando da função transição obtendo novos estados para o autômato final(o autômato final terá seus estados finais definidos de acordo com a operação escolhida) e estes estados também devem passar pela verificação de visitados ou a visitar e serem caminhados.
+A partir da lista de "visitados" obtida na multiplicação, os novos estados serão renomeados e os finais serão marcados de acordo com a operação: 
+\begin{itemize}
+	\item União: os estados marcados como finais serão as combinações dos estados finais originais, em outras palavras, os estados novos, obtidos numa lista de "visitados", começados com o estado final do primeiro autômato e terminados com o estado final do segundo autômato;
+	\item Interseção: serão finais apenas os novos estados que forem compostos exclusivamente por estados finais dos autômatos originais;
+	\item Diferença: nada mais é do que a interseção do primeiro automato com o complemento do segundo, ou seja, ela irá aceitar como estados finais novos apenas os estados começados pelo estados finais do primeiro autômato e terminado pelos estados não finais do segundo autômato.
+\end{itemize}
 
-Os estados serão marcados com finais de acordo com a operação : se for união os estados marcados como finais serão as combinações dos estados finais originais, em outras palavras, os estados novos começados com o estado final do primeiro autômato e os novos estados terminados com o estado final do segundo autômato. No caso da interseção serão finais apenas os novos estados que forem compostos exclusivamente por estados finais dos autômatos originais. A diferença nada mais é do que E NÃO, sendo assim ela irá aceitar como estados finais novos apenas os estados começados pelo estados finais do primeiro autômato e terminado pelos estados não finais do segundo autômato.
+Foi implementado um método para cada item anteriormente descrito.
 
+Na implementação ainda encontram-se outros pequenos métodos com sub tarefas utilizadas para a implementação das operações do trabalho, além das requeridas na especificação do trabalho, como:
 
-\paragraph{} Na implementação ainda encontram-se outros pequenos métodos com sub tarefas utilizadas para a implementação das operações do trabalho.
+\begin{itemize}
+\item existeNaLista: verifica se existe um objeto em uma lista do tipo \textit{TuplaEstados}
+\item getIndex: pega o índice do objeto de uma lista do tipo \textit{TuplaEstados} 
+\end{itemize}
 
-
-
-\begin{thebibliography}{1}	
-	
-	\bibitem[1]{}Ferreira, B.\\
-	Introdução a linguagem Java\\
-	Programação Orientada a Objetos\\
-	Prof. Dr. Bruno Ferreira		
-	
-\end{thebibliography}
-
+\section{Conclusão}
+Algumas das funções que foram requeridas na especificação, não foram implementadas, tais como, equivalencia de estados, equivalencia de automatos, minimização.
+\bibliographystyle{abnt-alf}
+\bibliography{referencia}
 
 \end{document}

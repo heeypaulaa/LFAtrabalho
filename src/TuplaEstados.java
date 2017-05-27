@@ -1,9 +1,13 @@
 /**
- * Created by paula on 23/05/17.
+ * Created by paula on 17/05/17.
+ * Ana Paula da Silva Cunha 0011252
+ * Suena Batista Galoneti 0011251
  */
+
+/*Classe criada para manipular os estados a serem visitados e os que ja foram visitados*/
 public class TuplaEstados {
-    private int afd1;
-    private int afd2;
+    private int afd1; /*estado do primeiro autômato*/
+    private int afd2; /*estado do segundo autômato*/
 
     public TuplaEstados(int m1, int m2) {
         this.setAfd1(m1);

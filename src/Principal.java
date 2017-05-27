@@ -37,8 +37,5 @@ public class Principal {
         */
 
 
-        List<String> eqv = new ArrayList<>();
-        eqv = m1.equivalents();
-
     }
 }

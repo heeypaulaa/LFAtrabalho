@@ -11,11 +11,9 @@ import java.util.List;
 
 
 /**
- * E – conjunto finito de estados.
- * Σ – alfabeto, formado por um conjunto finito de símbolos.
- * δ – função de transição, tipada como δ : (E ×Σ) → E.
- * i – estado inicial, tal que i ∈ E.
- * F – conjunto de estados finais, com F ⊆ E.
+ * Created by paula on 08/05/17.
+ * Ana Paula da Silva Cunha 0011252
+ * Suena Batista Galoneti 0011251
  */
 
 public class AFD {
@@ -58,7 +56,6 @@ public class AFD {
             }
             addState(id, estInicio, estFim);
             this.nomeEstados.add(est.getAttributeValue("name"));
-            //System.out.println("Nome: " + est.getAttributeValue("name"));
         }
 
         System.out.println();
@@ -68,9 +65,6 @@ public class AFD {
             int from = Integer.parseInt(trans.getChildText("from"));
             int to = Integer.parseInt(trans.getChildText("to"));
             char read = (trans.getChildText("read")).charAt(0);
-            //System.out.println(from);//"FROM: "+trans.getChildText("from"));
-            //System.out.println(to);//"PARA: "+trans.getChildText("to"));
-            //System.out.println(read);//"letra: "+trans.getChildText("read"));
             if (!this.alfabeto.contains(read)) {
                 this.alfabeto.add(read);
             }
@@ -78,49 +72,8 @@ public class AFD {
         }
     }
 
-    public void salve(String saida) {
+    public void save(String saida) {
 
-    }
-
-    public boolean equivalents(AFD m1, AFD m2) {
-        return false;
-    }
-
-    public List<TuplaEstados> equivalents() {
-        List<TuplaEstados> eqv = new ArrayList<>();
-        List<TuplaEstados> verifEqv = new ArrayList<>();
-
-        Integer toM1,toM2;
-        for(int i =0; i<this.estados.size()-1; i++){
-            Integer v1 = this.estados.get(i);
-            for(int j=i+1; j<this.estados.size(); j++){
-                Integer v2 = this.estados.get(j);
-                if((this.fim.contains(v1) && this.estados.contains(v2)) || (!this.fim.contains(v1) && !this.estados.contains(v2))){
-                    for (Character c : this.alfabeto) {
-                        String aux = "" + c;
-                        toM1 = this.move(v1, aux);
-                        toM2 = this.move(v2, aux);
-                        if(!this.fim.contains(toM1) || !this.fim.contains(toM2)){
-                            TuplaEstados vAux2 = new TuplaEstados(toM1, toM2);
-                            TuplaEstados vAux = new TuplaEstados(v1, v2);
-                            verifEqv.add(vAux);
-                            verifEqv.add(vAux2);
-                        }
-
-
-                       /* if (!existeNaLista(visitar,vAux))
-                            visitar.add(vAux);
-                        novo.addTransition(visitados.lastIndexOf(v), getIndex(visitar,vAux), c);*/
-                    }
-                }
-            }
-        }
-
-        return eqv;
-    }
-
-    public AFD minimum() {
-        return null;
     }
 
     /*OK*/
@@ -295,8 +248,6 @@ public class AFD {
             }
         }
     }
-
-
 
 
     private static boolean existeNaLista(List<TuplaEstados> l, TuplaEstados o){

@@ -1,10 +1,14 @@
 /**
  * Created by paula on 08/05/17.
+ * Ana Paula da Silva Cunha 0011252
+ * Suena Batista Galoneti 0011251
  */
+
+/*Classe feita para cada função de transição de um AFD*/
 public class FuncaoTransicao {
-    private int from;
-    private int to;
-    private char caracter;
+    private int from; /*estado de partida*/
+    private int to; /*estado de chegada*/
+    private char caracter; /*gasta*/
 
     public FuncaoTransicao(int de, int para, char caract) {
         this.setFrom(de);

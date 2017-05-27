@@ -1,0 +1,16 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{1.53 }
+
+\bibitem[Ferreira]{bruno}
+\abntrefinfo{Ferreira}{FERREIRA}{}
+{FERREIRA, B. \emph{Introdução a linguagem Java}.}
+
+\bibitem[Vieira e Barbosa]{1}
+\abntrefinfo{Vieira e Barbosa}{VIEIRA; BARBOSA}{}
+{VIEIRA, N.~J.; BARBOSA, I.~G. \emph{Máquinas de Estados Finitos}.}
+
+\end{thebibliography}
